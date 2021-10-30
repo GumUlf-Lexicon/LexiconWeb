@@ -21,9 +21,7 @@ body{
 	color: black;
 	background-color: floralwhite;
 	width: 1024px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 25px;
+	margin: 25px auto;
 	border: 5px solid black;
 }
 
