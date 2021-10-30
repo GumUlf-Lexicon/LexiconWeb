@@ -1,0 +1,230 @@
+*{
+	padding: 0;
+	margin: 0;
+}
+
+html{
+	background-color:lightgray
+}
+
+p{
+	margin-top: 10px;
+}
+
+p:first-of-type::first-letter {
+	font-weight: bolder;
+	font-size: 1.8em;
+}
+
+body{
+	font-family: sans-serif;
+	color: black;
+	background-color: floralwhite;
+	width: 1024px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 25px;
+	border: 5px solid black;
+}
+
+body.index{
+	display: grid;
+	grid-template-areas: 'header header' 'main aside' 'footer footer';
+	grid-template-columns: 75% 25%;
+}
+
+body.login{
+	display: grid;
+	grid-template-areas: 'header' 'main' 'footer';
+}
+
+header{
+	grid-area: header;
+	width: 100%;
+	padding: 20px 0px 0px 0px;
+	margin: 0px;
+	display: inline-grid;
+	grid-template-columns: 30% 40% 30%;
+	border-bottom: 2px solid black;
+}
+
+body.login header{
+	text-transform: uppercase;
+}
+
+header h1{
+	padding: 0px 0px 10px 20px;
+}
+
+header a{
+	display: block;
+	color:darkred;
+	text-decoration: none;
+	font-weight: bolder;
+}
+
+header>a{
+	font-size: 20px;
+	text-align: right;
+	border: none;
+	padding-top: 5px;
+	padding-right: 25px;
+}
+
+nav {
+	padding-bottom: 0px;
+	padding-top: 13px;
+	
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+nav ul{
+	float: left;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+nav li{
+	float: left;
+	background-color: blanchedalmond;
+	border-width: 2px 0px 0px 2px;
+	border-color: black;
+	border-style: solid;
+	border-radius: 10px 10px 0px 0px;
+	
+}
+
+nav li:last-child{
+	border-right: 2px solid black;
+}
+
+nav a{
+	padding: 8px;
+}
+
+nav a:hover{
+	background-color:cornsilk;
+	border-radius: 10px 10px 0px 0px;
+}
+
+
+main{
+	grid-area: main;
+	padding: 20px;
+	text-align: justify;
+}
+
+main h2{
+	padding: 15px 0px 5px 10px;
+}
+
+
+.index main{
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-template-rows: auto;
+}
+
+.focus-content{
+	margin: 10px;
+	grid-column: 1 / span 2;
+}
+
+article{
+	margin: 10px;
+}
+
+article:first-of-type p:nth-child(3){
+	color: blue;
+	font-weight: bold;
+}
+
+.photo{
+	margin: 10px;
+	font-size:x-small;
+	text-justify: center;
+}
+
+.photo img{
+	width: 100%;
+	border-radius: 10px;
+}
+
+aside{
+	border-left: 2px solid black;
+	grid-area: aside;
+	padding: 50px 10px 10px 20px;
+}
+
+aside ul>li{
+	margin: 20px 0px;
+	list-style: none;
+}
+
+aside ul>li:nth-child(even){
+	color: green;
+}
+
+aside ul>li:nth-child(odd){
+	color: red;
+}
+
+
+aside li>h4{
+	margin-bottom: 3px;
+}
+
+aside li>ol>li{
+	color: black;
+	margin-left: 30px;
+}
+
+form{
+	width: 220px;
+	padding: 10px 15px 0px 15px;
+	display: grid;
+	grid-template-columns: 110px 110px;
+	border: 2px solid black;
+	border-radius: 10px;
+}
+
+input[type=text], input[type=password]{
+	margin: 2px;
+	border-radius: 7px;
+	grid-column: 1 / span 2;
+}
+
+input[type=reset], input[type=submit]{
+	width: 90px;
+	height: 30px;
+	padding: auto 9px;
+	margin: 4px auto;
+	border: 2px solid black;
+	border-radius: 10px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	
+}
+
+input[type=reset]{
+	background-color: crimson;
+	color: white;
+}
+
+input[type=submit]{
+	background-color: green;
+	color: white;
+}
+
+footer{
+	grid-area: footer;
+	background-color:black;
+	color: gainsboro;
+	padding: 10px 0px 6px 0px;
+	text-align: center;
+}
+
