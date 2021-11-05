@@ -16,25 +16,25 @@ div#gameArea  div{
 }
 
 .tile-wall{
-	background: url('/img/tile-wall.png');
+	background: url('../img/tile-wall.png');
 }
 
 .tile-space{
-	background: url('/img/tile-space.png');
+	background: url('../img/tile-space.png');
 }
 
 .tile-goal{
-	background: url('/img/goal-X.png'), url('/img/tile-space.png'); 
+	background: url('../img/goal-X.png'), url('../img/tile-space.png'); 
 }
 
 .entity-player{
-	background: url('/img/entity-character-transparent.png');
+	background: url('../img/entity-character-transparent.png');
 }
 
 .entity-block{
-	background: url('/img/entity-block_tansparent.png');
+	background: url('../img/entity-block_tansparent.png');
 }
 
 .entity-block-goal{
-	background: url('/img/entity-block-goal-transparent.png');
+	background: url('../img/entity-block-goal-transparent.png');
 }
