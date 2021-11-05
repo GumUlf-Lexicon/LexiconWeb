@@ -1,14 +1,26 @@
+
+// Don't change without making new images
 const tileSideLengthPx = "50";
 
+// Where is the character?
 let characterPos = {
 	X: 0,
 	Y: 0,
 };
 
-let characterMoves = 0;
-let numberOfBlocks = 0;
-let numberOfBlocksInGoal = 0;
-let isGameDone = false;
+// What way do we want to go?
+const Direction = {
+	UP: 'UP',
+	LEFT: 'LEFT',
+	DOWN: 'DOWN',
+	RIGHT: 'RIGHT'
+};
+
+// Initiate and start the game
+let characterMoves;
+let numberOfBlocks;
+let numberOfBlocksInGoal;
+let isGameDone;
 
 setupGameArea(tileMap01);
 document.addEventListener('keydown', keyListner);
@@ -24,19 +36,28 @@ function setupGameArea(tileMap) {
 	characterMoves = 0;
 	numberOfBlocks = 0;
 	numberOfBlocksInGoal = 0;
+	isGameDone = false;
 	
+	const sokobanBody = document.getElementsByTagName('body')[0];
+	
+	// Cleanup the playing area
+	while (sokobanBody.lastChild) { sokobanBody.removeChild(sokobanBody.lastChild) }
+	
+
 	// Setup the cointainers for the game area
-	const game = document.getElementById("game");
+	const game = document.createElement('div');
+	game.setAttribute("id", "game");
+	sokobanBody.appendChild(game);
 	
 	game.style.width = tileMap.width * tileSideLengthPx + "px";
 	game.style.height = tileMap.height * tileSideLengthPx + "px";
 	
-	const gameArea = document.getElementById("gameArea");
-	
-	// Remove any old game tiles
-	while(gameArea.lastChild){ gameArea.removeChild(gameArea.lastChild)}
 
-	// Setup the grid
+	const gameArea = document.createElement('div');
+	gameArea.setAttribute("id", "gameArea");
+	game.appendChild(gameArea);
+
+	// Setup the grid for the game tiles
 	gameArea.style.display = "grid";
 	
 	let gridColumns = "";
@@ -59,7 +80,7 @@ function setupGameArea(tileMap) {
 		for (let column = 0; column < tileMap.width; column++){
 			
 			const gameTile = document.createElement("div");
-			gameTile.setAttribute("id", createTileId(column, row));
+			gameTile.setAttribute("id", constructTileId(column, row));
 			
 			/*  Legend
 			W = Wall
@@ -68,7 +89,7 @@ function setupGameArea(tileMap) {
    		G = Goal area for the blocks
 			" " = Empty space
 			*/
-			// The third indes is to be able to access the value bc of reasons :-p
+			// The third index is to be able to access the value bc of reasons :-p
 			switch (tileMap.mapGrid[row][column][0]) {
 				case " ":
 					gameTile.classList.add(Tiles.Space);
@@ -84,14 +105,24 @@ function setupGameArea(tileMap) {
 						
 				case "P":
 					gameTile.classList.add(Tiles.Space);
-					gameTile.classList.add(Entities.Character);
+
+					const characterTile = document.createElement("div");
+					characterTile.setAttribute("id", Entities.Character);
+					characterTile.classList.add(Entities.Character);
+					gameTile.appendChild(characterTile);
+					
 					characterPos.X = column;
 					characterPos.Y = row;
 					break;
 							
 				case "B":
 					gameTile.classList.add(Tiles.Space);
-					gameTile.classList.add(Entities.Block);
+
+					const blockTile = document.createElement("div");
+					blockTile.setAttribute("id", Entities.Block + '_' + numberOfBlocks);
+					blockTile.classList.add(Entities.Block);
+					gameTile.appendChild(blockTile);
+
 					numberOfBlocks++;
 					break;
 								
@@ -106,36 +137,46 @@ function setupGameArea(tileMap) {
 }
 
 
+// Listen for key presses to capture game commands
 function keyListner(e) {
-	// Listen for key presses to capture game commands
 
-	switch (e.code) {
+	switch (e.key) {
 	
+		// Move character upwards
 		case 'ArrowUp':
-		case 'KeyW':
+		case 'w':
+		case 'W':
 			e.preventDefault();
-			moveCharacter(0, -1);
+			moveCharacter(Direction.UP);
 			break;
 		
+		// Move character downwards
 		case 'ArrowDown':
-		case 'KeyS':
+		case 's':
+		case 'S':
 			e.preventDefault();
-			moveCharacter(0, 1);
+			moveCharacter(Direction.DOWN);
 			break;
 		
+		// Move character to the left
 		case 'ArrowLeft':
-		case 'KeyA':
+		case 'a':
+		case 'A':
 			e.preventDefault();
-			moveCharacter(-1, 0);
+			moveCharacter(Direction.LEFT);
 			break;
 		
+		// Move charater to the right
 		case 'ArrowRight':
-		case 'KeyD':
+		case 'd':
+		case 'D':
 			e.preventDefault();
-			moveCharacter(1, 0);
+			moveCharacter(Direction.RIGHT);
 			break;
 	
-		case 'KeyR':
+		// Restart the game
+		case 'r':
+		case 'R':
 			setupGameArea(tileMap01);
 			break;
 		
@@ -144,46 +185,72 @@ function keyListner(e) {
 	}
 }
 
-function moveCharacter(dX, dY) {
+// Move the character one step in the specified direction
+function moveCharacter(direction) {
 
-	if (positionInsideGameArea(characterPos.X + dX, characterPos.Y + dY)) {
-		let newCharacterTile = document.getElementById(createTileId(characterPos.X + dX, characterPos.Y + dY));
-		if (newCharacterTile.classList.contains(Tiles.Wall)) {
-			// Can't move into a wall
-			return;
-		}
-		else if ((newCharacterTile.classList.contains(Entities.Block) || newCharacterTile.classList.contains(Entities.BlockDone)) && !moveBlock(characterPos.X + dX, characterPos.Y + dY, dX, dY)) {
-			// Can't move block
-			return;
-		}
-		else {
-			// Move of Character is possible
-			let currentTile = document.getElementById(createTileId(characterPos.X, characterPos.Y));
-			
-			currentTile.classList.remove(Entities.Character);
-
-			if (currentTile.classList.contains(Tiles.Goal)) {
-				currentTile.classList.remove(Entities.Character + '-goal');
-			}
-			
-			newCharacterTile.classList.add(Entities.Character);
-
-			if (newCharacterTile.classList.contains(Tiles.Goal)) {
-				newCharacterTile.classList.add(Entities.Character + '-goal');
-			}
-
-			characterPos.X = characterPos.X + dX;
-			characterPos.Y = characterPos.Y + dY;
-			characterMoves++;
-		}
+	if (isGameDone) {
+		return;
 	}
 
+	let dX=0, dY=0;
+
+	switch (direction) {
+
+		case Direction.UP:
+			dY = -1;
+			break;
+
+		case Direction.LEFT:
+			dX = -1;
+			break;
+		
+		case Direction.DOWN:
+			dY = 1;
+			break;
+		
+		case Direction.RIGHT:
+			dX = 1;
+			break;
+		
+		default:
+			return;
+	}
+	
+
+
+	if (!positionInsideGameArea(characterPos.X + dX, characterPos.Y + dY)) {
+		return;
+	}
+
+	let newCharacterTile = document.getElementById(constructTileId(characterPos.X + dX, characterPos.Y + dY));
+	if (newCharacterTile.classList.contains(Tiles.Wall)) {
+		// Can't move into a wall
+		return;
+	}
+	else if (containsBlock(newCharacterTile) && !moveBlock(characterPos.X + dX, characterPos.Y + dY, dX, dY)) {
+		// Can't move block
+		return;
+	}
+	else {
+		// Move of Character is possible
+		let currentTile = document.getElementById(constructTileId(characterPos.X, characterPos.Y));			
+		let characterTile = currentTile.removeChild(document.getElementById(Entities.Character));
+		
+		newCharacterTile.appendChild(characterTile);
+		
+		// Keep track of the character position
+		characterPos.X = characterPos.X + dX;
+		characterPos.Y = characterPos.Y + dY;
+		
+		characterMoves++;
+	}
+
+	// Check if the game is won, and present some stats and 
+	// give the player the possibility to start a new game.
 	if (numberOfBlocks === numberOfBlocksInGoal) {
+		isGameDone = true;
 		if (confirm("Congratulations! You won the game in " + characterMoves + " moves!\n To start a new game, press OK!")) {
 			setupGameArea(tileMap01);
-		}
-		else {
-			return;
 		}
 	}
 
@@ -191,56 +258,96 @@ function moveCharacter(dX, dY) {
 
 function moveBlock(x, y, dX, dY) {
 
-	if (positionInsideGameArea(x + dX, y + dY)){
-		let presentBlockTile = document.getElementById(createTileId(x, y));
-		let newBlockTile = document.getElementById(createTileId(x + dX, y + dY));
-
-		let isMovePossible = !newBlockTile.classList.contains(Tiles.Wall) && !newBlockTile.classList.contains(Entities.Block) && !newBlockTile.classList.contains(Entities.BlockDone);
-
-		if (isMovePossible && presentBlockTile.classList.contains(Tiles.Space) && newBlockTile.classList.contains(Tiles.Space)) {
-			// Block is moved from one space tile to another
-			presentBlockTile.classList.remove(Entities.Block);
-			newBlockTile.classList.add(Entities.Block);
-			return true;
-		}
-		else if (isMovePossible && presentBlockTile.classList.contains(Tiles.Goal) && newBlockTile.classList.contains(Tiles.Space)) {
-			// Block is move out from a goal tile to a space tile
-			presentBlockTile.classList.remove(Entities.BlockDone);
-			newBlockTile.classList.add(Entities.Block);
-			numberOfBlocksInGoal--;
-			return true;
-		}
-		else if (isMovePossible && presentBlockTile.classList.contains(Tiles.Goal) && newBlockTile.classList.contains(Tiles.Goal)) {
-			// Block is moved from one goal tile to another
-			presentBlockTile.classList.remove(Entities.BlockDone);
-			newBlockTile.classList.add(Entities.BlockDone);
-			return true;
-		}
-		else if (isMovePossible && presentBlockTile.classList.contains(Tiles.Space) && newBlockTile.classList.contains(Tiles.Goal)) {
-			// Block is moved from a space tile to a goal tile
-			presentBlockTile.classList.remove(Entities.Block);
-			newBlockTile.classList.add(Entities.BlockDone);
-			numberOfBlocksInGoal++;
-			return true;			
-		}
-		else {
-			return false;
-		}
-			
+	// Checking that the new place for the block is inside the game area
+	if (!positionInsideGameArea(x + dX, y + dY)) {
+		return false;
 	}
-	return false;
+
+	// We can't move the block to a tile with a wall or another block
+	const newBlockTile = document.getElementById(constructTileId(x + dX, y + dY));
+	if (newBlockTile.classList.contains(Tiles.Wall) || containsBlock(newBlockTile)) {
+		return false;
+	}
+
+	// Time to move the Block
+	const presentBlockTile = document.getElementById(constructTileId(x, y));
+	
+	if (presentBlockTile.classList.contains(Tiles.Space) && newBlockTile.classList.contains(Tiles.Space)) {
+
+		// Block is moved from one space tile to another
+	
+		let block = presentBlockTile.removeChild(presentBlockTile.lastChild);
+		newBlockTile.appendChild(block);
+
+		return true;
+	
+	}
+	else if (presentBlockTile.classList.contains(Tiles.Goal) && newBlockTile.classList.contains(Tiles.Space)) {
+
+		// Block is moved from a goal tile to a space tile
+	
+		let block = presentBlockTile.removeChild(presentBlockTile.lastChild);
+		block.classList.remove(Entities.BlockDone);
+		
+		block.classList.add(Entities.Block);
+		newBlockTile.appendChild(block);
+		
+		numberOfBlocksInGoal--;
+	
+		return true;
+	
+	}
+	else if (presentBlockTile.classList.contains(Tiles.Goal) && newBlockTile.classList.contains(Tiles.Goal)) {
+	
+		// Block is moved from one goal tile to another
+	
+		let block = presentBlockTile.removeChild(presentBlockTile.lastChild);
+		block.classList.remove(Entities.BlockDone);
+	
+		block.classList.add(Entities.BlockDone);
+		newBlockTile.appendChild(block);
+	
+		return true;
+	
+	}
+	else if (presentBlockTile.classList.contains(Tiles.Space) && newBlockTile.classList.contains(Tiles.Goal)) {
+	
+		// Block is moved from a space tile to a goal tile
+	
+		let block = presentBlockTile.removeChild(presentBlockTile.lastChild);
+		block.classList.remove(Entities.Block);
+
+		block.classList.add(Entities.BlockDone);
+		newBlockTile.appendChild(block);
+
+		numberOfBlocksInGoal++;
+	
+		return true;
+	}
+	else {
+
+		// Why are we here?
+		return false;
+	}		
 }
 
 
+// Check that the coordinates are inside the game area.
 function positionInsideGameArea(x, y) {
-	var positionIsInside = true;
-	positionIsInside = x >= 0;
-	positionIsInside = positionIsInside && x < tileMap01.width;
-	positionIsInside = positionIsInside && y >= 0;
-	positionIsInside = positionIsInside && y < tileMap01.height;
-	return positionIsInside;
+	var isInside = true;
+	isInside = x >= 0;
+	isInside = isInside && x < tileMap01.width;
+	isInside = isInside && y >= 0;
+	isInside = isInside && y < tileMap01.height;
+	return isInside;
 }
 
-function createTileId(x, y) {
+// Check if a given tile has any kind of block on it
+function containsBlock(tile){
+	return tile.getElementsByClassName(Entities.Block).length > 0 || tile.getElementsByClassName(Entities.BlockDone).length > 0;
+}
+
+// Make a tileId from coordinates
+function constructTileId(x, y) {
 	return 'x' + x + '_y' + y;
 }
