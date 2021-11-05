@@ -1,0 +1,51 @@
+
+
+div#game{
+	margin: 50px auto;
+	border: 5px solid black;
+}
+
+
+div#gameArea > div{
+	width: 50px;
+	height: 50px;
+	font-size: 50px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	
+}
+.tile-wall{
+	background-color: steelblue;
+	background:url('/Assignment_3/img/sokoban-sprite.png') 0px 0;
+}
+
+.tile-space{
+	background-color: lightgray;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -50px 0;
+}
+
+.tile-goal{
+	background-color: yellow;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -100px 0;
+}
+
+.entity-player{
+	background-color: green !important;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -250px 0;
+}
+
+.entity-player-goal{
+	background-color: green !important;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -300px 0;
+}
+
+.entity-block{
+	background-color: crimson;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -150px 0;
+}
+
+.entity-block-goal{
+	background-color: goldenrod;
+	background:url('/Assignment_3/img/sokoban-sprite.png') -200px 0;
+}
